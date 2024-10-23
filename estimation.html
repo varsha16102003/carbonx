@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emission Estimation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js library -->
+</head>
+
+<body>
+    <!-- Header Section -->
+    <div class="content">
+        <h1 class="section-title">Carbon Emission Estimation</h1>
+        <section class="input-section">
+            <h2 class="sub-title">Select Mining Activity</h2>
+            <div class="input-chart-wrapper">
+                <!-- Chart Container (left side) -->
+                <div id="chartContainer" style="display: none; width: 300px; height: 150px;">
+                    <canvas id="emissionChart"></canvas>
+                </div>
+
+                <!-- Form Container (right side) -->
+                <form class="input-form" id="emission-form">
+                    <!-- Dropdown for Mining Activity Selection -->
+                    <label for="activity">Mining Activity:</label>
+                    <select id="activity" name="activity" required>
+                        <option value="">Select an Activity</option>
+                        <option value="excavation">Excavation and Blasting</option>
+                        <option value="drilling">Drilling and Boring</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="processing">Processing and Crushing</option>
+                        <option value="ventilation">Ventilation Systems</option>
+                        <option value="pumping">Pumping and Water Management</option>
+                        <option value="power-generation">Power Generation</option>
+                        <option value="lighting">Lighting and Facility Operations</option>
+                        <option value="reclamation">Reclamation and Rehabilitation</option>
+                        <option value="waste-management">Waste Management</option>
+                    </select>
+
+                    <!-- Dynamic Inputs based on Activity -->
+                    <div id="dynamic-inputs"></div>
+
+                    <button type="submit" class="cta-button">Calculate Emissions</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Emission Results -->
+        <section class="results-section">
+            <h2 class="sub-title">Emission Results</h2>
+            <div class="results-box">
+                <p>Total Carbon Emissions: <span id="total-emissions">---</span> tons CO₂</p>
+            </div>
+
+            <!-- Generate Report Button -->
+            <button id="generate-report" class="cta-button">Generate Report</button>
+        </section>
+    </div>
+
+    <!-- JavaScript to handle dynamic inputs, calculations, and PDF generation -->
+    <script>
+        let chart; // Variable to hold the chart instance
+
+        document.getElementById('activity').addEventListener('change', function () {
+            const activity = this.value;
+            const dynamicInputs = document.getElementById('dynamic-inputs');
+            dynamicInputs.innerHTML = ''; // Clear previous inputs
+
+            if (activity === 'excavation') {
+                dynamicInputs.innerHTML = `
+                    <label for="excavation-volume">Excavation Volume (m³):</label>
+                    <input type="number" id="excavation-volume" name="excavation-volume" placeholder="e.g., 5000" required>
+                    
+                    <label for="explosives">Explosives Used (kg):</label>
+                    <input type="number" id="explosives" name="explosives" placeholder="e.g., 200" required>
+                `;
+            } else if (activity === 'drilling') {
+                dynamicInputs.innerHTML = `
+                    <label for="rig-usage">Drilling Rig Usage (hours):</label>
+                    <input type="number" id="rig-usage" name="rig-usage" placeholder="e.g., 10" required>
+
+                    <label for="fuel-consumption">Fuel Consumption (liters):</label>
+                    <input type="number" id="fuel-consumption" name="fuel-consumption" placeholder="e.g., 150" required>
+                `;
+            } else if (activity === 'transportation') {
+                dynamicInputs.innerHTML = `
+                    <label for="distance">Transportation Distance (km):</label>
+                    <input type="number" id="distance" name="distance" placeholder="e.g., 50" required>
+
+                    <label for="vehicle-fuel">Fuel Consumption (liters):</label>
+                    <input type="number" id="vehicle-fuel" name="vehicle-fuel" placeholder="e.g., 200" required>
+                `;
+            } else if (activity === 'processing') {
+                dynamicInputs.innerHTML = `
+                    <label for="energy-consumption">Energy Consumption (kWh):</label>
+                    <input type="number" id="energy-consumption" name="energy-consumption" placeholder="e.g., 1000" required>
+
+                    <label for="equipment-hours">Crushing Equipment Usage (hours):</label>
+                    <input type="number" id="equipment-hours" name="equipment-hours" placeholder="e.g., 5" required>
+                `;
+            }
+            // Add similar blocks for other activities
+        });
+
+        document.getElementById('emission-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const activity = document.getElementById('activity').value;
+            let emissions = 0;
+            let labels = [];
+            let dataPoints = [];
+
+            // Perform emission calculations based on selected activity
+            if (activity === 'excavation') {
+                const excavationVolume = document.getElementById('excavation-volume').value;
+                const explosives = document.getElementById('explosives').value;
+                emissions = (excavationVolume * 0.05) + (explosives * 0.3); // Example calculation
+                labels = ['Excavation Volume', 'Explosives Used']; // Chart labels
+                dataPoints = [excavationVolume * 0.05, explosives * 0.3]; // Chart data points
+            } else if (activity === 'drilling') {
+                const rigUsage = document.getElementById('rig-usage').value;
+                const fuelConsumption = document.getElementById('fuel-consumption').value;
+                emissions = (rigUsage * 0.2) + (fuelConsumption * 2.6); // Example calculation
+                labels = ['Drilling Rig Usage', 'Fuel Consumption']; // Chart labels
+                dataPoints = [rigUsage * 0.2, fuelConsumption * 2.6]; // Chart data points
+            } else if (activity === 'transportation') {
+                const distance = document.getElementById('distance').value;
+                const vehicleFuel = document.getElementById('vehicle-fuel').value;
+                emissions = (distance * 0.3) + (vehicleFuel * 2.6); // Example calculation
+                labels = ['Transportation Distance', 'Vehicle Fuel Consumption']; // Chart labels
+                dataPoints = [distance * 0.3, vehicleFuel * 2.6]; // Chart data points
+            } else if (activity === 'processing') {
+                const energyConsumption = document.getElementById('energy-consumption').value;
+                const equipmentHours = document.getElementById('equipment-hours').value;
+                emissions = (energyConsumption * 0.2) + (equipmentHours * 0.5); // Example calculation
+                labels = ['Energy Consumption', 'Equipment Hours']; // Chart labels
+                dataPoints = [energyConsumption * 0.2, equipmentHours * 0.5]; // Chart data points
+            }
+
+            // Display total emissions result
+            document.getElementById('total-emissions').textContent = emissions.toFixed(2);
+
+            // Show the chart and generate it with the calculated data
+            document.getElementById('chartContainer').style.display = 'block';
+            generateEmissionChart(labels, dataPoints);
+        });
+
+        // Chart generation function
+        function generateEmissionChart(labels, dataPoints) {
+            const ctx = document.getElementById('emissionChart').getContext('2d');
+
+            // Destroy the previous chart if it exists
+            if (chart) {
+                chart.destroy();
+            }
+
+            // Create a new chart
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels, // Array of labels (e.g., ['Activity 1', 'Activity 2'])
+                    datasets: [{
+                        label: 'Carbon Emissions (tons CO₂)',
+                        data: dataPoints, // Array of data points (e.g., [10, 20])
+                        backgroundColor: ['#ff9900', '#000'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        document.getElementById('generate-report').addEventListener('click', function () {
+    const totalEmissions = document.getElementById('total-emissions').textContent;
+    const activity = document.getElementById('activity').value;
+    let dynamicInputsContent = '';
+
+    // Gather dynamic inputs based on selected activity
+    if (activity === 'excavation') {
+        const excavationVolume = document.getElementById('excavation-volume').value;
+        const explosives = document.getElementById('explosives').value;
+        dynamicInputsContent = `Excavation Volume: ${excavationVolume} m³\nExplosives Used: ${explosives} kg\n`;
+    } else if (activity === 'drilling') {
+        const rigUsage = document.getElementById('rig-usage').value;
+        const fuelConsumption = document.getElementById('fuel-consumption').value;
+        dynamicInputsContent = `Drilling Rig Usage: ${rigUsage} hours\nFuel Consumption: ${fuelConsumption} liters\n`;
+    } else if (activity === 'transportation') {
+        const distance = document.getElementById('distance').value;
+        const vehicleFuel = document.getElementById('vehicle-fuel').value;
+        dynamicInputsContent = `Transportation Distance: ${distance} km\nFuel Consumption: ${vehicleFuel} liters\n`;
+    } else if (activity === 'processing') {
+        const energyConsumption = document.getElementById('energy-consumption').value;
+        const equipmentHours = document.getElementById('equipment-hours').value;
+        dynamicInputsContent = `Energy Consumption: ${energyConsumption} kWh\nEquipment Hours: ${equipmentHours} hours\n`;
+    }
+
+    // Create a PDF document
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Set PDF title and content
+    doc.setFontSize(18);
+    doc.text('Carbon Emission Estimation Report', 20, 20);
+    doc.setFontSize(12);
+    doc.text(`Selected Activity: ${activity}`, 20, 30);
+    doc.text(`Total Carbon Emissions: ${totalEmissions} tons CO₂`, 20, 40);
+    doc.text('Details:', 20, 50);
+    doc.text(dynamicInputsContent, 20, 60);
+    
+    // Save the PDF
+    doc.save('carbon_emission_report.pdf');
+});
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000; /* Dark background */
+            color: white; /* White text */
+        }
+
+        .content {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            background-color: #1c1c1c; /* Darker section background */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .input-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin: 10px 0 5px;
+        }
+
+        input, select {
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ff9900; /* Orange border */
+            border-radius: 4px;
+            background-color: #333; /* Darker input background */
+            color: white; /* White text in inputs */
+        }
+
+        .cta-button {
+            background-color: #ff9900; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .results-section {
+            background-color: #1c1c1c; /* Darker section background */
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .results-box {
+            background-color: #333; /* Dark background for results */
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</body>
+
+</html>

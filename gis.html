@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coal Mines in India - Wasteland Map</title> <!-- Only keep this title -->
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Leaflet CSS for map styling -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+    <!-- Geoman for drawing and measuring areas -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.css" />
+</head>
+
+<body>
+    <!-- Header Section -->
+<header class="header">
+    <div class="container">
+        <!-- Interactive Text Logo -->
+        <div class="logo">CarbonX</div>
+
+        <!-- Navigation Menu -->
+        <nav class="navbar">
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gis.html">Afforestation Offsets</a></li>
+                <li><a href="gapanalysis.html">Emission Gap Analysis</a></li>
+                <li><a href="cc.html">Carbon Credits</a></li>
+                <li><a href="blog.html">Blogs</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+
+            <!-- Login/Sign-Up Button -->
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-signup">Sign Up</a>
+                <a href="#" class="btn btn-login">Login</a>
+            </div>
+        </nav>
+    </div>
+</header>
+
+    <h3>Coal Mines in India - Wasteland Around Coal Mines</h3>
+    
+    <div id="controls">
+        <!-- Dropdown for selecting a coal mine -->
+        <label for="coalMines">Select a Coal Mine: </label>
+        <select id="coalMines">
+            <!-- Dropdown options with names and coordinates -->
+            <option value="23.6345,87.2425">Raniganj Coalfield, West Bengal</option>
+            <option value="21.7147,82.0281">Korba Coalfield, Chhattisgarh</option>
+            <option value="21.9595,80.8837">Gevra Coalfield, Chhattisgarh</option>
+            <option value="22.6047,85.3580">Talcher Coalfield, Odisha</option>
+            <option value="22.2542,83.0777">Ib Valley, Odisha</option>
+            <option value="23.7875,86.9081">Jharia Coalfield, Jharkhand</option>
+            <option value="21.1671,79.0834">Chandrapur Coalfield, Maharashtra</option>
+            <option value="23.2735,81.5567">Sohagpur Coalfield, Madhya Pradesh</option>
+            <option value="23.5450,86.8730">Dhanbad, Jharkhand</option>
+            <option value="23.6556,84.6192">North Karanpura, Jharkhand</option>
+            <option value="19.6655,79.2976">Manuguru, Telangana</option>
+            <option value="23.7393,84.7547">Hazaribagh Coalfield, Jharkhand</option>
+            <option value="23.3878,85.3435">Bokaro, Jharkhand</option>
+            <option value="20.2862,85.8413">Sambalpur, Odisha</option>
+            <option value="23.0350,83.0650">Raigarh Coalfield, Chhattisgarh</option>
+            <option value="23.0762,85.7600">Ramgarh Coalfield, Jharkhand</option>
+            <option value="21.5783,81.2546">Dipka Coalfield, Chhattisgarh</option>
+            <option value="20.9980,85.1479">Angul Coalfield, Odisha</option>
+            <option value="23.9874,86.9360">Kusunda, Jharkhand</option>
+            <option value="23.6317,86.8698">Bhurkunda, Jharkhand</option>
+        </select>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS for map functionality -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Geoman plugin for drawing and area measurements -->
+    <script src="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+
+    <script>
+        // Initialize the map and set default view to Raniganj
+        var map = L.map('map').setView([23.6345, 87.2425], 12);
+
+        // Add Esri World Imagery Tile Layer (Satellite Imagery)
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+        }).addTo(map);
+
+        // Wasteland data for all coal mines
+        var wastelandData = {
+            "Raniganj Coalfield, West Bengal": [
+                [[23.633, 87.241], [23.636, 87.244], [23.634, 87.247], [23.631, 87.244]],
+                [[23.637, 87.240], [23.640, 87.243], [23.638, 87.246], [23.635, 87.243]]
+            ],
+            "Korba Coalfield, Chhattisgarh": [
+                [[21.713, 82.027], [21.716, 82.030], [21.714, 82.033], [21.711, 82.030]],
+                [[21.710, 82.025], [21.713, 82.028], [21.711, 82.031], [21.708, 82.028]]
+            ],
+            "Gevra Coalfield, Chhattisgarh": [
+                [[21.958, 80.882], [21.961, 80.885], [21.959, 80.888], [21.956, 80.885]]
+            ],
+            "Talcher Coalfield, Odisha": [
+                [[22.603, 85.357], [22.606, 85.360], [22.604, 85.363], [22.601, 85.360]]
+            ],
+            "Ib Valley, Odisha": [
+                [[22.253, 83.076], [22.256, 83.079], [22.254, 83.082], [22.251, 83.079]]
+            ],
+            "Jharia Coalfield, Jharkhand": [
+                [[23.786, 86.907], [23.789, 86.910], [23.787, 86.913], [23.784, 86.910]],
+                [[23.788, 86.908], [23.791, 86.911], [23.789, 86.914], [23.786, 86.911]]
+            ],
+            "Chandrapur Coalfield, Maharashtra": [
+                [[21.166, 79.082], [21.169, 79.085], [21.167, 79.088], [21.164, 79.085]]
+            ],
+            "Sohagpur Coalfield, Madhya Pradesh": [
+                [[23.272, 81.555], [23.275, 81.558], [23.273, 81.561], [23.270, 81.558]]
+            ],
+            "Dhanbad, Jharkhand": [
+                [[23.544, 86.872], [23.547, 86.875], [23.545, 86.878], [23.542, 86.875]]
+            ],
+            "North Karanpura, Jharkhand": [
+                [[23.654, 84.618], [23.657, 84.621], [23.655, 84.624], [23.652, 84.621]]
+            ],
+            "Manuguru, Telangana": [
+                [[19.664, 79.296], [19.667, 79.299], [19.665, 79.302], [19.662, 79.299]]
+            ],
+            "Hazaribagh Coalfield, Jharkhand": [
+                [[23.738, 84.753], [23.741, 84.756], [23.739, 84.759], [23.736, 84.756]]
+            ],
+            "Bokaro, Jharkhand": [
+                [[23.386, 85.342], [23.389, 85.345], [23.387, 85.348], [23.384, 85.345]]
+            ],
+            "Sambalpur, Odisha": [
+                [[20.285, 85.840], [20.288, 85.843], [20.286, 85.846], [20.283, 85.843]]
+            ],
+            "Raigarh Coalfield, Chhattisgarh": [
+                [[23.034, 83.064], [23.037, 83.067], [23.035, 83.070], [23.032, 83.067]]
+            ],
+            "Ramgarh Coalfield, Jharkhand": [
+                [[23.075, 85.759], [23.078, 85.762], [23.076, 85.765], [23.073, 85.762]]
+            ],
+            "Dipka Coalfield, Chhattisgarh": [
+                [[21.577, 81.253], [21.580, 81.256], [21.578, 81.259], [21.575, 81.256]]
+            ],
+            "Angul Coalfield, Odisha": [
+                [[20.997, 85.146], [21.000, 85.149], [20.998, 85.152], [20.995, 85.149]]
+            ],
+            "Kusunda, Jharkhand": [
+                [[23.986, 86.935], [23.989, 86.938], [23.987, 86.941], [23.984, 86.938]]
+            ],
+            "Bhurkunda, Jharkhand": [
+                [[23.630, 86.868], [23.633, 86.871], [23.631, 86.874], [23.628, 86.871]]
+            ]
+        };
+
+        // Function to add a wasteland polygon
+        function addWastelandPolygons(lat, lon, name) {
+    // Remove existing marker and polygons
+    if (currentMarker) map.removeLayer(currentMarker);
+    if (currentPolygons) {
+        currentPolygons.forEach(function(polygon) {
+            map.removeLayer(polygon);
+        });
+    }
+
+    // Add new marker for the selected coal mine
+    currentMarker = L.marker([lat, lon]).addTo(map).bindPopup("<b>Selected Coal Mine: " + name + "</b>").openPopup();
+
+    // Set the map view to the new coal mine
+    map.setView([lat, lon], 12);
+
+    // Add new polygons representing wasteland
+    var polygons = wastelandData[name];
+    if (polygons) {
+        currentPolygons = polygons.map(function(coords) {
+            // Create the polygon
+            var polygon = L.polygon(coords, {
+                color: 'blue',
+                fillColor: 'rgba(0, 0, 255, 0.2)', // Shading the wasteland
+                fillOpacity: 0.5
+            }).addTo(map).bindPopup("Wasteland Area");
+
+            // Add click event to redirect to a new page
+            polygon.on('click', function() {
+                window.location.href = "wasteland_details.html?mine=" + encodeURIComponent(name);
+            });
+
+            return polygon;  // Return the polygon after attaching the event
+        });
+    } else {
+        console.log("No wasteland data available for: " + name);
+    }
+}
+
+        var currentMarker = null;
+        var currentPolygons = [];
+
+        // Initialize default polygons for Raniganj
+        addWastelandPolygons(23.6345, 87.2425, "Raniganj Coalfield, West Bengal");
+
+        // Function to update the map when a new coal mine is selected
+        document.getElementById('coalMines').addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            var selectedLocation = this.value.split(',');
+            var lat = parseFloat(selectedLocation[0]);
+            var lon = parseFloat(selectedLocation[1]);
+            var name = selectedOption.text;
+
+            // Add new wasteland polygons for the selected coal mine
+            addWastelandPolygons(lat, lon, name);
+        });
+    </script>
+    <!-- Footer Section -->
+<footer class="footer">
+    <div class="container">
+        <!-- Company Info -->
+        <div class="footer-section company-info">
+            <h3>About CarbonX</h3>
+            <p>CarbonX is committed to empowering industries with innovative solutions to monitor and reduce their carbon footprint. Our mission is to promote environmental sustainability through cutting-edge technology and data-driven insights.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-section quick-links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Afforestation Offsets</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+
+        <!-- Legal Links -->
+        <div class="footer-section legal-links">
+            <h3>Legal Links</h3>
+            <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+            </ul>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="footer-section social-media">
+            <h3>Follow Us</h3>
+            <ul>
+                <li><a href="#"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+                <li><a href="#"><i class="fab fa-linkedin-in"></i> LinkedIn</a></li>
+                <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom">
+        <p>© 2024 CarbonX. All Rights Reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

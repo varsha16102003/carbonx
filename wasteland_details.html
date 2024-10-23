@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarbonX Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #fff;
+}
+
+.header {
+  background-color: #333;
+  color: #ff9900;
+  padding: 20px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+}
+
+.nav-menu {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-menu li {
+  margin-right: 20px;
+}
+
+.nav-menu a {
+  color: #ff9900;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.nav-menu a:hover {
+  text-decoration: underline;
+}
+
+.auth-buttons a {
+  color: #ff9900;
+  text-decoration: none;
+  font-size: 16px;
+  margin-left: 10px;
+  padding: 10px 20px;
+  border: 2px solid #ff9900;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+.auth-buttons .btn-signup:hover, .auth-buttons .btn-login:hover {
+  background-color: #ff9900;
+  color: #000;
+  transform: scale(1.05);
+}
+
+#content {
+  margin: 20px;
+  background-color: #111;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.section-title {
+  font-size: 24px;
+  margin-top: 40px;
+  color: #ff9900;
+  border-bottom: 2px solid #ff9900;
+  padding-bottom: 10px;
+}
+
+.plant-section {
+  background-color: #222;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.plant-section img {
+  width: 150px;
+  height: 150px;
+  margin: 10px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.plant-section img:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+.plant-section p {
+  font-size: 18px;
+  margin-top: 10px;
+  color: #fff;
+}
+
+.comparison-table {
+  margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #333;
+}
+
+.comparison-table th, .comparison-table td {
+  border: 1px solid #666;
+  padding: 10px;
+  text-align: center;
+}
+
+.comparison-table th {
+  background-color: #333;
+  color: #ff9900;
+}
+
+.comparison-table td {
+  background-color: #222;
+  color: #fff;
+}
+
+.cta-button, .analyse-button {
+  margin-top: 20px;
+  padding: 15px 30px;
+  background-color: #ff9900;
+  color: #000;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cta-button:hover, .analyse-button:hover {
+  background-color: #ffa07a;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.coal-mine-gallery {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.coal-mine-gallery h2 {
+  margin-bottom: 20px;
+  color: #ff9900;
+}
+
+.coal-mine-gallery img {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  margin: 0 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Adds a subtle shadow */
+  transition: transform 0.3s ease;
+}
+
+.coal-mine-gallery img:hover {
+  transform: scale(1.1);
+}
+
+.graph-container {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.graph-container canvas {
+  max-width: 100%;
+}
+    </style>
+    <!-- Include Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <!-- Coal Mine Images Section -->
+    <div class="coal-mine-gallery">
+        <h2>Raniganj Coal Mine</h2>
+        <div class="gallery-container">
+            <img src="pic1.jpeg" alt="Raniganj Coal Mine Image 1">
+            <img src="pic2.jpeg" alt="Raniganj Coal Mine Image 2">
+            <img src="pic3.jpeg" alt="Raniganj Coal Mine Image 3">
+        </div>
+    </div>
+
+    <!-- Plant Selection - Most Important Part -->
+    <div class="section-title">Plantation Focus</div>
+
+    <div class="plant-section">
+        <h3>Native Species Recommendations</h3>
+        <img src="neem.jpeg" alt="Neem Tree">
+        <img src="sal.jpeg" alt="Sal Tree">
+        <img src="acacia.jpeg" alt="Acacia Tree">
+        <p>
+            Native species like Neem (Azadirachta indica), Sal (Shorea robusta), and Acacia (Acacia nilotica) are ideal for enhancing carbon sequestration and improving soil quality in the Raniganj wasteland.
+        </p>
+  
+        <h3>Drought-Resistant Species</h3>
+        <p>
+            For areas prone to drought, species such as Bamboo, Jatropha, and Prosopis juliflora are recommended due to their resilience and fast-growing nature.
+        </p>
+
+        <h3>Ideal Planting Density</h3>
+        <p>An optimal planting density of 70-80% coverage will ensure better carbon absorption and improve ecological balance.</p>
+    </div>
+
+    <!-- CTA for Plant Recommendation -->
+    <a href="#" class="cta-button">Get Customized Plantation Recommendations</a>
+
+    <!-- Economic Viability Section -->
+    <div class="section-title">Economic Viability</div>
+    <p>
+        The estimated cost of plantation and land preparation is ₹1.5-2.0 lakh per hectare, which includes procurement of seedlings, irrigation systems, and labor.
+    </p>
+
+    <!-- Soil Analysis, Climate Conditions, and Land Topography -->
+    <div class="section-title">Additional Information</div>
+
+    <!-- Soil Analysis Table -->
+    <table class="comparison-table">
+        <tr>
+            <th style="width: 33%;">Soil Type</th>
+            <th style="width: 33%;">Soil pH Level</th>
+            <th style="width: 33%;">Soil Fertility</th>
+        </tr>
+        <tr>
+            <td>Loamy</td>
+            <td>6.0 - 7.0</td>
+            <td>High in organic matter</td>
+        </tr>
+    </table>
+
+    <!-- Climate Conditions Table -->
+    <table class="comparison-table" style="margin-top: 20px;">
+        <tr>
+            <th style="width: 33%;">Temperature</th>
+            <th style="width: 33%;">Precipitation</th>
+            <th style="width: 33%;">Humidity</th>
+        </tr>
+        <tr>
+            <td>25°C - 35°C</td>
+            <td>1200 mm/year</td>
+            <td>60%</td>
+        </tr>
+    </table>
+
+  
+
+ <!-- Overall Carbon Sink Calculation Section -->
+<div class="section-title">Overall Carbon Sink Calculation</div>
+<p>
+    By analyzing various parameters like soil type, climatic conditions, and species selection, we can effectively estimate the carbon sink potential of the plantation over the next 10 years.
+</p>
+
+<div class="graph-container" style="width: 80%; max-width: 600px; margin: 0 auto;">
+    <canvas id="carbonSinkGraph" width="400" height="200"></canvas>
+</div>
+  <!-- Carbon Sequestration Section -->
+  <div class="section-title">Carbon Sequestration</div>
+  <p>
+      <strong>Annual Carbon Emission:</strong> The current carbon emissions in the Raniganj area are approximately 22.62% per year.
+  </p>
+  <p>
+      With the recommended plantation of native and drought-resistant species, it is projected that carbon footprints could be reduced by 30% within 5 years.
+  </p>
+  <a href="gapanalysis.html" class="cta-button analyse-button">Analyse Carbon Emission - Carbon Sink Gap</a>
+
+
+<script>
+    // Sample data for carbon sink estimation graph
+    const ctx = document.getElementById('carbonSinkGraph').getContext('2d');
+    const carbonSinkGraph = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6', 'Year 7', 'Year 8', 'Year 9', 'Year 10'],
+            datasets: [{
+                label: 'Carbon Sink (tonnes)',
+                data: [0, 50, 100, 200, 300, 400, 500, 600, 700, 800],
+                backgroundColor: 'rgba(255, 153, 0, 0.5)',
+                borderColor: '#ff9900',
+                borderWidth: 2,
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Carbon Sink (tonnes)',
+                        color: '#ff9900',
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Years',
+                        color: '#ff9900',
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#ff9900',
+                    }
+                },
+            },
+        }
+    });
+</script>
+
+</body>
+</html>

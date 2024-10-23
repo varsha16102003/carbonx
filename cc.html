@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Credits</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+        }
+
+        header {
+            background-color: #333;
+            color: #f39c12;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 28px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #111;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .section h2, .section h3 {
+            font-size: 24px;
+            color: #ff9900;
+            border-bottom: 2px solid #ff9900;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        .section img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ff9900;
+            text-align: center;
+            color: #fff;
+        }
+
+        table th {
+            background-color: #333;
+        }
+
+        table td {
+            background-color: #222;
+        }
+
+        input[type="number"], input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ff9900;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #ff9900;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #ffa07a;
+            color: #fff;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            padding-left: 0; /* Ensure no extra padding on the left */
+        }
+
+        ul li img {
+            width: 150px; /* Adjust the size of the images as needed */
+            height: 150px;
+            margin-right: 15px; /* Space between image and text */
+            border-radius: 8px; /* Optional: Add rounded corners */
+        }
+
+        .case-study {
+            margin-top: 20px;
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .download-resources a {
+            display: inline-block;
+            margin-right: 15px;
+            margin-top: 10px;
+            color: #ff9900;
+            text-decoration: none;
+            font-size: 18px;
+            border: 1px solid #ff9900;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .download-resources a:hover {
+            background-color: #ffa07a;
+            color: #fff;
+        }
+
+        .important-section {
+            background-color: #ff9900;
+            color: #000;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(255, 153, 0, 0.6);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .important-section h3 {
+            font-size: 30px;
+            margin-bottom: 15px;
+            color: #000;
+           
+        }
+
+        .important-section input {
+            font-size: 18px;
+            padding: 12px;
+            width: 80%;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #000;
+        }
+
+        .important-section button {
+            background-color: #000;
+            color: #ff9900;
+            font-size: 18px;
+            padding: 12px 30px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .important-section button:hover {
+            background-color: #333;
+            color: #ffa500;
+        }
+
+        /* Contact buttons styling */
+        .contact-button {
+            background-color: #ff9900;
+            color: #000;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .contact-button:hover {
+            background-color: #ffa07a;
+            color: #fff;
+        }
+
+        /* Benefits Section */
+        .benefits {
+            border-bottom: 2px solid #ff9900; /* Orange underline */
+            padding-bottom: 20px; /* Space below the border */
+        }
+
+        .benefits h2 {
+            font-size: 24px;
+            color: #ff9900;
+            border-bottom: 2px solid #ff9900; /* Orange underline */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #111;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .benefit-icon {
+            font-size: 60px;
+            color: #ff9900;
+            margin-right: 20px;
+        }
+
+        .benefit-info {
+            color: #ddd;
+        }
+
+        .benefit-info h3 {
+            font-size: 20px;
+            color: #ff9900;
+            margin: 0 0 10px 0;
+        }
+
+        .benefit-info p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>Carbon Credits</header>
+    <div class="container">
+
+        <!-- Calculator Section (Moved to the top and emphasized) -->
+        <div class="section calculator important-section">
+            <h3>Carbon Credit Calculator</h3>
+            <p>Use the tool below to estimate the number of carbon credits you need or could earn based on your emissions data.</p>
+            <label for="emissions">Enter your emissions (in tons of CO2):</label>
+            <input type="number" id="emissions" placeholder="e.g., 50">
+            <button onclick="calculateCredits()">Calculate</button>
+            <div id="calculator-result"></div>
+        </div>
+        
+        <!-- Infographic Section -->
+       
+
+        <!-- Purchase Options Section -->
+        <div class="section purchase-options">
+            <h2>Purchase Options</h2>
+            <p>Explore where you can buy carbon credits and compare options.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Provider</th>
+                        <th>Type of Credit</th>
+                        <th>Price (per ton)</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>EcoCredits Inc.</td>
+                        <td>Verified Emission Reductions</td>
+                        <td>$10</td>
+                        <td><a href="mailto:info@ecocredits.com" class="contact-button">Contact</a></td>
+                    </tr>
+                    <tr>
+                        <td>GreenPlanet</td>
+                        <td>Renewable Energy Credits</td>
+                        <td>$15</td>
+                        <td><a href="mailto:support@greenplanet.org" class="contact-button">Contact</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="section infographic">
+            <h2>Carbon Credit</h2>
+            <p>Carbon credits are a market-based mechanism designed to reduce global greenhouse gas emissions. One carbon credit represents one ton of CO2 that has been prevented from entering the atmosphere. Companies and individuals can purchase these credits to offset their own carbon emissions.</p>
+            <img src="cc.jpg" alt="Carbon Credit Infographic">
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="container">
+    
+            <!-- Benefits Section -->
+            <div class="section benefits">
+                <h2>Benefits of Carbon Credits</h2>
+                <div class="benefit-item">
+                    <i class="fas fa-tree benefit-icon"></i>
+                    <div class="benefit-info">
+                        <h3>Reduces Emissions</h3>
+                        <p>Helps lower greenhouse gas emissions by offsetting carbon output.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-hand-holding-heart benefit-icon"></i>
+                    <div class="benefit-info">
+                        <h3>Sustainable Development</h3>
+                        <p>Supports projects that contribute to sustainable development goals.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-gavel benefit-icon"></i>
+                    <div class="benefit-info">
+                        <h3>Regulatory Compliance</h3>
+                        <p>Aids in meeting regulatory requirements for carbon reduction.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-dollar-sign benefit-icon"></i>
+                    <div class="benefit-info">
+                        <h3>Economic Growth</h3>
+                        <p>Encourages investment in green technologies and sustainable practices.</p>
+                    </div>
+                </div>
+            </div>
+    
+        
+        
+
+        <!-- Case Studies Section -->
+        <div class="section case-studies">
+            <h2>Case Studies</h2>
+            <p>Discover real-life examples of carbon credit programs making an impact:</p>
+            <div class="case-study">
+                <h3>Project A: Reforestation in Brazil</h3>
+                <p>This project helped reforest 500 hectares of land, sequestering over 30,000 tons of CO2 annually.</p>
+            </div>
+            <div class="case-study">
+                <h3>Project B: Wind Energy in India</h3>
+                <p>By supporting the installation of 100 wind turbines, this project has offset 20,000 tons of CO2.</p>
+            </div>
+        </div>
+
+        <!-- Download Resources Section -->
+        <div class="section download-resources">
+            <h2>Download Resources</h2>
+            <a href="guide-to-carbon-credits.pdf" class="download-button">Guide to Carbon Credits</a>
+            <a href="carbon-footprint-calculation.xlsx" class="download-button">Carbon Footprint Calculation Template</a>
+        </div>
+
+    </div>
+
+    <script>
+        function calculateCredits() {
+            const emissions = document.getElementById('emissions').value;
+            const credits = emissions * 0.1; // Example calculation
+            document.getElementById('calculator-result').innerText = 'You need ' + credits.toFixed(2) + ' carbon credits to offset your emissions.';
+        }
+    </script>
+</body>
+</html>
